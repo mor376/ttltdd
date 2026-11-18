@@ -2,21 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{admin/fragments/layout :: head('Đăng nhập')}"></head>
 <body class="login-page">
-    <div class="login-box">
-        <h2>📰 Quản trị Tin Tức</h2>
+<div class="login-wrap">
 
-        <div class="alert alert-error" th:if="${param.error}">Sai tên đăng nhập hoặc mật khẩu</div>
-        <div class="alert alert-success" th:if="${param.logout}">Bạn đã đăng xuất</div>
+    <section class="login-hero">
+        <div class="brand">
+            <span class="brand-logo">T</span>
+            <span class="brand-name">Tin Tức</span>
+        </div>
+        <h1>Hệ thống quản trị nội dung</h1>
+        <p>Quản lý bài viết, chuyên mục và người dùng cho ứng dụng đọc tin tức trên điện thoại.</p>
+        <ul>
+            <li>Soạn thảo và đăng bài nhanh chóng</li>
+            <li>Phân loại tin theo chuyên mục</li>
+            <li>Phân quyền quản trị an toàn</li>
+        </ul>
+    </section>
 
-        <form th:action="@{/admin/login}" method="post">
-            <label for="username">Tên đăng nhập</label>
-            <input type="text" id="username" name="username" required autofocus>
+    <section class="login-panel">
+        <div class="login-box">
+            <h2>Đăng nhập</h2>
+            <p class="login-sub">Vui lòng đăng nhập để vào trang quản trị</p>
 
-            <label for="password">Mật khẩu</label>
-            <input type="password" id="password" name="password" required>
+            <div class="alert alert-error" th:if="${param.error}">Sai tên đăng nhập hoặc mật khẩu</div>
+            <div class="alert alert-success" th:if="${param.logout}">Bạn đã đăng xuất</div>
 
-            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
-        </form>
-    </div>
+            <form th:action="@{/admin/login}" method="post">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" required autofocus>
+
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+
+                <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+            </form>
+        </div>
+    </section>
+
+</div>
 </body>
 </html>

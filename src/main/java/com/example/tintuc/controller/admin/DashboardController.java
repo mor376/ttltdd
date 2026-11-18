@@ -1,5 +1,6 @@
 package com.example.tintuc.controller.admin;
 
+import com.example.tintuc.entity.ArticleStatus;
 import com.example.tintuc.repository.ArticleRepository;
 import com.example.tintuc.repository.CategoryRepository;
 import com.example.tintuc.repository.UserRepository;
@@ -21,6 +22,8 @@ public class DashboardController {
         model.addAttribute("userCount", userRepository.count());
         model.addAttribute("categoryCount", categoryRepository.count());
         model.addAttribute("articleCount", articleRepository.count());
+        model.addAttribute("draftCount", articleRepository.countByStatus(ArticleStatus.DRAFT));
+        model.addAttribute("latestArticles", articleRepository.findTop5ByOrderByCreatedAtDesc());
         return "admin/dashboard";
     }
 }

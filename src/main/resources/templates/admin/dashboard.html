@@ -9,22 +9,86 @@
         <header th:replace="~{admin/fragments/layout :: topbar}"></header>
 
         <main class="content">
-            <h1>Dashboard</h1>
+            <div class="page-head">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p class="page-sub">Tổng quan hoạt động của hệ thống tin tức</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/admin/articles/create}">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Viết bài mới
+                </a>
+            </div>
 
             <div class="cards">
-                <div class="card">
-                    <div class="card-number" th:text="${userCount}">0</div>
-                    <div class="card-label">Người dùng</div>
-                </div>
-                <div class="card">
-                    <div class="card-number" th:text="${categoryCount}">0</div>
-                    <div class="card-label">Chuyên mục</div>
-                </div>
-                <div class="card">
-                    <div class="card-number" th:text="${articleCount}">0</div>
-                    <div class="card-label">Bài viết</div>
-                </div>
+                <a class="stat-card" th:href="@{/admin/articles}">
+                    <span class="stat-icon blue">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </span>
+                    <span>
+                        <span class="card-number" th:text="${articleCount}">0</span>
+                        <span class="card-label">Bài viết</span>
+                    </span>
+                </a>
+                <a class="stat-card" th:href="@{/admin/categories}">
+                    <span class="stat-icon green">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <span>
+                        <span class="card-number" th:text="${categoryCount}">0</span>
+                        <span class="card-label">Chuyên mục</span>
+                    </span>
+                </a>
+                <a class="stat-card" th:href="@{/admin/users}">
+                    <span class="stat-icon purple">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </span>
+                    <span>
+                        <span class="card-number" th:text="${userCount}">0</span>
+                        <span class="card-label">Người dùng</span>
+                    </span>
+                </a>
+                <a class="stat-card" th:href="@{/admin/articles}">
+                    <span class="stat-icon orange">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                    </span>
+                    <span>
+                        <span class="card-number" th:text="${draftCount}">0</span>
+                        <span class="card-label">Bản nháp</span>
+                    </span>
+                </a>
             </div>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>Bài viết mới nhất</h2>
+                    <a th:href="@{/admin/articles}" class="link">Xem tất cả &rarr;</a>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Tiêu đề</th>
+                        <th>Chuyên mục</th>
+                        <th style="width:110px">Trạng thái</th>
+                        <th style="width:150px">Ngày tạo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${latestArticles}">
+                        <td th:text="${a.title}">Tiêu đề</td>
+                        <td th:text="${a.category.name}">Chuyên mục</td>
+                        <td>
+                            <span class="badge" th:classappend="${a.status.name() == 'PUBLISHED'} ? 'badge-green' : 'badge-gray'"
+                                  th:text="${a.status.name() == 'PUBLISHED'} ? 'Đã đăng' : 'Bản nháp'">Nháp</span>
+                        </td>
+                        <td th:text="${a.createdAt != null} ? ${#temporals.format(a.createdAt, 'dd/MM/yyyy HH:mm')} : ''">-</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(latestArticles)}">
+                        <td colspan="4" class="empty">Chưa có bài viết nào</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
         </main>
     </div>
 </div>
