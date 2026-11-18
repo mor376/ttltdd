@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Chuyên mục')}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('categories')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <div class="page-head">
+                <h1>Quản lý chuyên mục</h1>
+                <a class="btn btn-primary" th:href="@{/admin/categories/create}">+ Thêm chuyên mục</a>
+            </div>
+
+            <div th:replace="~{admin/fragments/layout :: alerts}"></div>
+
+            <form class="toolbar" method="get" th:action="@{/admin/categories}">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên chuyên mục...">
+                <button type="submit" class="btn btn-primary">Tìm</button>
+                <a class="btn btn-light" th:href="@{/admin/categories}">Xóa lọc</a>
+            </form>
+
+            <table>
+                <thead>
+                <tr>
+                    <th style="width:60px">STT</th>
+                    <th>Tên chuyên mục</th>
+                    <th>Slug</th>
+                    <th>Mô tả</th>
+                    <th style="width:100px">Số bài</th>
+                    <th style="width:170px">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c, st : ${page.content}">
+                    <td th:text="${page.number * page.size + st.count}">1</td>
+                    <td th:text="${c.name}">Tên</td>
+                    <td th:text="${c.slug}">slug</td>
+                    <td th:text="${c.description}">Mô tả</td>
+                    <td th:text="${counts[c.id]}">0</td>
+                    <td class="actions">
+                        <a class="btn btn-light btn-sm"
+                           th:href="@{/admin/categories/edit/{id}(id=${c.id})}">Sửa</a>
+                        <form th:action="@{/admin/categories/delete/{id}(id=${c.id})}" method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn xóa chuyên mục này?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${page.empty}">
+                    <td colspan="6" class="empty">Chưa có chuyên mục nào</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination" th:if="${page.totalPages > 1}">
+                <a th:if="${page.hasPrevious()}"
+                   th:href="@{/admin/categories(page=${page.number - 1}, keyword=${keyword})}">&laquo;</a>
+                <a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                   th:href="@{/admin/categories(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == page.number} ? 'active'">1</a>
+                <a th:if="${page.hasNext()}"
+                   th:href="@{/admin/categories(page=${page.number + 1}, keyword=${keyword})}">&raquo;</a>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

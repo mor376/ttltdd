@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Người dùng')}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('users')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <div class="page-head">
+                <h1>Quản lý người dùng</h1>
+                <a class="btn btn-primary" th:href="@{/admin/users/create}">+ Thêm người dùng</a>
+            </div>
+
+            <div th:replace="~{admin/fragments/layout :: alerts}"></div>
+
+            <form class="toolbar" method="get" th:action="@{/admin/users}">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên đăng nhập, email, họ tên...">
+                <button type="submit" class="btn btn-primary">Tìm</button>
+                <a class="btn btn-light" th:href="@{/admin/users}">Xóa lọc</a>
+            </form>
+
+            <table>
+                <thead>
+                <tr>
+                    <th style="width:60px">STT</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th style="width:100px">Vai trò</th>
+                    <th style="width:150px">Ngày tạo</th>
+                    <th style="width:170px">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u, st : ${page.content}">
+                    <td th:text="${page.number * page.size + st.count}">1</td>
+                    <td th:text="${u.username}">admin</td>
+                    <td th:text="${u.fullName}">Họ tên</td>
+                    <td th:text="${u.email}">mail</td>
+                    <td>
+                        <span class="badge" th:classappend="${u.role.name() == 'ADMIN'} ? 'badge-blue' : 'badge-gray'"
+                              th:text="${u.role.name()}">ADMIN</span>
+                    </td>
+                    <td th:text="${u.createdAt != null} ? ${#temporals.format(u.createdAt, 'dd/MM/yyyy HH:mm')} : ''">-</td>
+                    <td class="actions">
+                        <a class="btn btn-light btn-sm" th:href="@{/admin/users/edit/{id}(id=${u.id})}">Sửa</a>
+                        <form th:if="${u.username != currentUsername}"
+                              th:action="@{/admin/users/delete/{id}(id=${u.id})}" method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn xóa người dùng này?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${page.empty}">
+                    <td colspan="7" class="empty">Không có người dùng nào</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination" th:if="${page.totalPages > 1}">
+                <a th:if="${page.hasPrevious()}"
+                   th:href="@{/admin/users(page=${page.number - 1}, keyword=${keyword})}">&laquo;</a>
+                <a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                   th:href="@{/admin/users(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == page.number} ? 'active'">1</a>
+                <a th:if="${page.hasNext()}"
+                   th:href="@{/admin/users(page=${page.number + 1}, keyword=${keyword})}">&raquo;</a>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

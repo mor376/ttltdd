@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('categories')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <h1 th:text="${pageTitle}">Thêm chuyên mục</h1>
+
+            <form class="form-card" method="post" th:object="${category}"
+                  th:action="@{${category.id == null ? '/admin/categories/create' : '/admin/categories/edit/' + category.id}}">
+
+                <label for="name">Tên chuyên mục *</label>
+                <input type="text" id="name" th:field="*{name}" placeholder="Ví dụ: Thể thao">
+                <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+
+                <label for="description">Mô tả</label>
+                <textarea id="description" rows="4" th:field="*{description}"></textarea>
+                <div class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+
+                <p class="hint" th:if="${category.id != null}">
+                    Slug hiện tại: <strong th:text="${category.slug}"></strong> (tự cập nhật khi đổi tên)
+                </p>
+                <p class="hint" th:if="${category.id == null}">Slug sẽ được tạo tự động từ tên.</p>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a class="btn btn-light" th:href="@{/admin/categories}">Hủy</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>

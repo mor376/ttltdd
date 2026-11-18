@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' - Quản trị tin tức'">Quản trị tin tức</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body>
+
+<!-- Menu trái: dùng th:replace="~{admin/fragments/layout :: sidebar('dashboard')}" -->
+<aside th:fragment="sidebar(active)" class="sidebar">
+    <div class="brand">📰 Tin Tức</div>
+    <nav>
+        <a th:href="@{/admin/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">Dashboard</a>
+        <a th:href="@{/admin/categories}" th:classappend="${active == 'categories'} ? 'active'">Chuyên mục</a>
+        <a th:href="@{/admin/articles}" th:classappend="${active == 'articles'} ? 'active'">Bài viết</a>
+        <a th:href="@{/admin/users}" th:classappend="${active == 'users'} ? 'active'">Người dùng</a>
+    </nav>
+</aside>
+
+<!-- Thanh trên: tên admin + nút đăng xuất -->
+<header th:fragment="topbar" class="topbar">
+    <span>Xin chào, <strong sec:authentication="name">admin</strong></span>
+    <form th:action="@{/admin/logout}" method="post">
+        <button type="submit" class="btn btn-light">Đăng xuất</button>
+    </form>
+</header>
+
+<!-- Thông báo thành công / lỗi (dùng ở các trang CRUD) -->
+<div th:fragment="alerts">
+    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+</div>
+
+</body>
+</html>

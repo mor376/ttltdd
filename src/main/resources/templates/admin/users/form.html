@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('users')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <h1 th:text="${pageTitle}">Thêm người dùng</h1>
+
+            <form class="form-card" method="post" th:object="${userForm}"
+                  th:action="@{${userForm.id == null ? '/admin/users/create' : '/admin/users/edit/' + userForm.id}}">
+
+                <label for="username">Tên đăng nhập *</label>
+                <input type="text" id="username" th:field="*{username}" th:readonly="${userForm.id != null}">
+                <div class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                <p class="hint" th:if="${userForm.id != null}">Không thể đổi tên đăng nhập.</p>
+
+                <label for="fullName">Họ tên *</label>
+                <input type="text" id="fullName" th:field="*{fullName}">
+                <div class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+
+                <label for="email">Email *</label>
+                <input type="email" id="email" th:field="*{email}">
+                <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+                <label for="password">
+                    Mật khẩu <span th:if="${userForm.id == null}">*</span>
+                </label>
+                <input type="password" id="password" name="password" autocomplete="new-password">
+                <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                <p class="hint" th:if="${userForm.id != null}">Để trống nếu không muốn đổi mật khẩu.</p>
+
+                <label for="role">Vai trò *</label>
+                <select id="role" th:field="*{role}">
+                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">USER</option>
+                </select>
+                <div class="field-error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a class="btn btn-light" th:href="@{/admin/users}">Hủy</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>

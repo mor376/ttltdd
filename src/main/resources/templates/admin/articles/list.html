@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Bài viết')}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('articles')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <div class="page-head">
+                <h1>Quản lý bài viết</h1>
+                <a class="btn btn-primary" th:href="@{/admin/articles/create}">+ Thêm bài viết</a>
+            </div>
+
+            <div th:replace="~{admin/fragments/layout :: alerts}"></div>
+
+            <form class="toolbar" method="get" th:action="@{/admin/articles}">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tiêu đề...">
+                <select name="categoryId">
+                    <option value="">Tất cả chuyên mục</option>
+                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"
+                            th:selected="${categoryId != null and categoryId == c.id}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a class="btn btn-light" th:href="@{/admin/articles}">Xóa lọc</a>
+            </form>
+
+            <table>
+                <thead>
+                <tr>
+                    <th style="width:50px">STT</th>
+                    <th style="width:90px">Ảnh</th>
+                    <th>Tiêu đề</th>
+                    <th>Chuyên mục</th>
+                    <th>Tác giả</th>
+                    <th style="width:100px">Trạng thái</th>
+                    <th style="width:70px">Lượt xem</th>
+                    <th style="width:130px">Ngày tạo</th>
+                    <th style="width:150px">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a, st : ${page.content}">
+                    <td th:text="${page.number * page.size + st.count}">1</td>
+                    <td>
+                        <img class="thumb" th:if="${a.thumbnail != null}"
+                             th:src="@{/uploads/{f}(f=${a.thumbnail})}" alt="">
+                        <span class="muted" th:if="${a.thumbnail == null}">Không có</span>
+                    </td>
+                    <td th:text="${a.title}">Tiêu đề</td>
+                    <td th:text="${a.category.name}">Chuyên mục</td>
+                    <td th:text="${a.author.fullName}">Tác giả</td>
+                    <td>
+                        <span class="badge" th:classappend="${a.status.name() == 'PUBLISHED'} ? 'badge-green' : 'badge-gray'"
+                              th:text="${a.status.name() == 'PUBLISHED'} ? 'Đã đăng' : 'Bản nháp'">Nháp</span>
+                    </td>
+                    <td th:text="${a.viewCount}">0</td>
+                    <td th:text="${a.createdAt != null} ? ${#temporals.format(a.createdAt, 'dd/MM/yyyy HH:mm')} : ''">-</td>
+                    <td class="actions">
+                        <a class="btn btn-light btn-sm" th:href="@{/admin/articles/edit/{id}(id=${a.id})}">Sửa</a>
+                        <form th:action="@{/admin/articles/delete/{id}(id=${a.id})}" method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn xóa bài viết này?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${page.empty}">
+                    <td colspan="9" class="empty">Chưa có bài viết nào</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination" th:if="${page.totalPages > 1}">
+                <a th:if="${page.hasPrevious()}"
+                   th:href="@{/admin/articles(page=${page.number - 1}, keyword=${keyword}, categoryId=${categoryId})}">&laquo;</a>
+                <a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                   th:href="@{/admin/articles(page=${i}, keyword=${keyword}, categoryId=${categoryId})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == page.number} ? 'active'">1</a>
+                <a th:if="${page.hasNext()}"
+                   th:href="@{/admin/articles(page=${page.number + 1}, keyword=${keyword}, categoryId=${categoryId})}">&raquo;</a>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

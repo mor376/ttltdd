@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('articles')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <h1 th:text="${pageTitle}">Thêm bài viết</h1>
+
+            <form class="form-card form-wide" method="post" enctype="multipart/form-data"
+                  th:object="${articleForm}"
+                  th:action="@{${articleForm.id == null ? '/admin/articles/create' : '/admin/articles/edit/' + articleForm.id}}">
+
+                <label for="title">Tiêu đề *</label>
+                <input type="text" id="title" th:field="*{title}">
+                <div class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+
+                <div class="row">
+                    <div class="col">
+                        <label for="categoryId">Chuyên mục *</label>
+                        <select id="categoryId" th:field="*{categoryId}">
+                            <option value="">-- Chọn chuyên mục --</option>
+                            <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                        </select>
+                        <div class="field-error" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></div>
+                    </div>
+                    <div class="col">
+                        <label for="status">Trạng thái *</label>
+                        <select id="status" th:field="*{status}">
+                            <option th:each="s : ${statuses}" th:value="${s}"
+                                    th:text="${s.name() == 'PUBLISHED'} ? 'Đã đăng' : 'Bản nháp'">Nháp</option>
+                        </select>
+                        <div class="field-error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+                    </div>
+                </div>
+
+                <label for="summary">Tóm tắt</label>
+                <textarea id="summary" rows="3" th:field="*{summary}"></textarea>
+                <div class="field-error" th:if="${#fields.hasErrors('summary')}" th:errors="*{summary}"></div>
+
+                <label for="content">Nội dung *</label>
+                <textarea id="content" rows="14" th:field="*{content}"></textarea>
+                <div class="field-error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+
+                <label for="thumbnailFile">Ảnh đại diện (jpg, png, gif, webp, tối đa 5MB)</label>
+                <div th:if="${articleForm.thumbnail != null}" class="current-thumb">
+                    <img class="thumb-large" th:src="@{/uploads/{f}(f=${articleForm.thumbnail})}" alt="">
+                    <p class="hint">Ảnh hiện tại. Chọn ảnh mới để thay thế, bỏ trống để giữ nguyên.</p>
+                </div>
+                <input type="file" id="thumbnailFile" name="thumbnailFile" accept="image/*">
+                <div class="field-error" th:if="${#fields.hasErrors('thumbnail')}" th:errors="*{thumbnail}"></div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a class="btn btn-light" th:href="@{/admin/articles}">Hủy</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>

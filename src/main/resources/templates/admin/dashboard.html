@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Dashboard')}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('dashboard')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <h1>Dashboard</h1>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="card-number" th:text="${userCount}">0</div>
+                    <div class="card-label">Người dùng</div>
+                </div>
+                <div class="card">
+                    <div class="card-number" th:text="${categoryCount}">0</div>
+                    <div class="card-label">Chuyên mục</div>
+                </div>
+                <div class="card">
+                    <div class="card-number" th:text="${articleCount}">0</div>
+                    <div class="card-label">Bài viết</div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
