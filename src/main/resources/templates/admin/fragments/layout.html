@@ -10,47 +10,76 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <script th:src="@{/js/admin.js}" defer></script>
 </head>
 
 <body>
 
 <!-- Menu trái: th:replace="~{admin/fragments/layout :: sidebar('dashboard')}" -->
 <aside th:fragment="sidebar(active)" class="sidebar">
-    <div class="brand">
-        <span class="brand-logo">T</span>
-        <span class="brand-name">Tin Tức<small>Trang quản trị</small></span>
+    <div class="sidebar-brand">
+        <a class="brand" th:href="@{/admin/dashboard}" aria-label="TinTuc24h - Tổng quan">
+            <span class="brand-logo">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H20v17H7.5A2.5 2.5 0 0 0 5 21.5z"/><path d="M5 4.5v17M9 7h7M9 10h7M9 13h5"/></svg>
+            </span>
+            <span class="brand-name">TinTuc24h<small>NEWSROOM CMS</small></span>
+        </a>
+        <button class="sidebar-collapse" type="button" data-sidebar-collapse aria-label="Thu gọn menu" title="Thu gọn menu">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 9l-3 3 3 3"/></svg>
+        </button>
     </div>
 
-    <div class="nav-label">Tổng quan</div>
-    <nav>
+    <div class="nav-label">Không gian làm việc</div>
+    <nav class="sidebar-nav">
         <a th:href="@{/admin/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">
-            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            <span>Dashboard</span>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>
+            <span>Tổng quan</span><span class="nav-link-arrow">›</span>
         </a>
-    </nav>
-
-    <div class="nav-label">Nội dung</div>
-    <nav>
         <a th:href="@{/admin/articles}" th:classappend="${active == 'articles'} ? 'active'">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            <span>Bài viết</span>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+            <span>Quản lý bài viết</span><span class="nav-link-arrow">›</span>
+        </a>
+        <a th:href="@{/admin/comments}" th:classappend="${active == 'comments'} ? 'active'">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 4a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>
+            <span>Quản lý bình luận</span>
+            <span class="nav-count" th:if="${pendingCommentCount > 0}" th:text="${pendingCommentCount}">0</span>
         </a>
         <a th:href="@{/admin/categories}" th:classappend="${active == 'categories'} ? 'active'">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            <span>Chuyên mục</span>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16M8 7h8M8 11h8"/></svg>
+            <span>Danh mục tin tức</span><span class="nav-link-arrow">›</span>
+        </a>
+        <a th:href="@{/admin/users}" th:classappend="${active == 'users'} ? 'active'">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+            <span>Quản lý người dùng</span><span class="nav-link-arrow">›</span>
         </a>
     </nav>
 
-    <div class="nav-label">Hệ thống</div>
-    <nav>
-        <a th:href="@{/admin/users}" th:classappend="${active == 'users'} ? 'active'">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Người dùng</span>
+    <div class="nav-label">Phân tích & hệ thống</div>
+    <nav class="sidebar-nav">
+        <a th:href="@{/admin/dashboard#analytics}">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-5 5"/><path d="M15 9h4v4"/></svg>
+            <span>Thống kê – Báo cáo</span>
         </a>
+        <span class="sidebar-disabled" title="Chức năng cài đặt chưa được triển khai">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 1.4 1.1-1.4 2.4-1.7-.7a7.8 7.8 0 0 1-1.8 1l-.3 1.8h-2.8l-.3-1.8a7.8 7.8 0 0 1-1.8-1l-1.7.7-1.4-2.4L7 15a7.6 7.6 0 0 1 0-2l-1.4-1.1L7 9.5l1.7.7a7.8 7.8 0 0 1 1.8-1l.3-1.8h2.8l.3 1.8a7.8 7.8 0 0 1 1.8 1l1.7-.7 1.4 2.4L19.4 13a7.6 7.6 0 0 1 0 2z"/></svg>
+            <span>Cài đặt</span><span class="coming-soon">Sắp có</span>
+        </span>
     </nav>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="/images/admin-avatar.svg" alt="" class="sidebar-avatar">
+            <span class="sidebar-user-copy"><strong sec:authentication="name">admin</strong><small>Quản trị viên</small></span>
+        </div>
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="sidebar-logout" title="Đăng xuất">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+                <span>Đăng xuất</span>
+            </button>
+        </form>
+    </div>
 </aside>
 
-<!-- Thanh trên: nút mở menu (điện thoại) + tên admin + đăng xuất -->
 <header th:fragment="topbar" class="topbar">
     <div class="sidebar-overlay"
          onclick="document.querySelector('.app').classList.remove('sidebar-open')"></div>
@@ -60,23 +89,39 @@
         <svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
 
-    <div class="topbar-spacer"></div>
-
-    <div class="user-chip">
-        <span class="avatar"
-              th:text="${#strings.toUpperCase(#strings.substring(#authentication.name, 0, 1))}">A</span>
-        <span class="user-meta">
-            <strong sec:authentication="name">admin</strong>
-            <small>Quản trị viên</small>
-        </span>
+    <div class="topbar-context">
+        <span class="topbar-kicker">TinTuc24h</span>
+        <span class="topbar-divider">/</span>
+        <span class="topbar-context-label">Newsroom CMS</span>
     </div>
 
-    <form th:action="@{/admin/logout}" method="post" class="logout-form">
-        <button type="submit" class="btn btn-light btn-icon" title="Đăng xuất">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            <span>Đăng xuất</span>
-        </button>
+    <div class="topbar-spacer"></div>
+
+    <form class="quick-search" method="get" th:action="@{/admin/articles}" role="search">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input type="search" name="keyword" placeholder="Tìm bài viết..." aria-label="Tìm bài viết">
+        <kbd>Ctrl K</kbd>
     </form>
+
+    <a class="notification-button" th:href="@{/admin/comments(status='PENDING')}"
+       aria-label="Bình luận đang chờ duyệt" title="Bình luận đang chờ duyệt">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        <span class="notification-count" th:if="${pendingCommentCount > 0}" th:text="${pendingCommentCount}">0</span>
+    </a>
+
+    <details class="account-menu">
+        <summary>
+            <img src="/images/admin-avatar.svg" alt="" class="account-avatar">
+            <span class="account-copy"><strong sec:authentication="name">admin</strong><small>Administrator</small></span>
+            <svg class="icon account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="account-dropdown">
+            <a th:href="@{/admin/users}">Quản lý tài khoản</a>
+            <form th:action="@{/admin/logout}" method="post">
+                <button type="submit">Đăng xuất</button>
+            </form>
+        </div>
+    </details>
 </header>
 
 <!-- Thông báo thành công / lỗi (dùng ở các trang CRUD) -->

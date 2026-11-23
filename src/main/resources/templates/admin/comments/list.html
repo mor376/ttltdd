@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Bình luận')}"></head>
+<body>
+<div class="app">
+    <aside th:replace="~{admin/fragments/layout :: sidebar('comments')}"></aside>
+
+    <div class="main">
+        <header th:replace="~{admin/fragments/layout :: topbar}"></header>
+
+        <main class="content">
+            <div class="page-head">
+                <h1>Quản lý bình luận</h1>
+                <a class="btn btn-primary" th:href="@{/admin/comments/create}">+ Thêm bình luận</a>
+            </div>
+
+            <div th:replace="~{admin/fragments/layout :: alerts}"></div>
+
+            <form class="toolbar" method="get" th:action="@{/admin/comments}">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm nội dung hoặc người bình luận...">
+                <select name="articleId">
+                    <option value="">Tất cả bài viết</option>
+                    <option th:each="a : ${articles}" th:value="${a.id}" th:text="${a.title}"
+                            th:selected="${articleId != null and articleId == a.id}"></option>
+                </select>
+                <select name="status">
+                    <option value="">Tất cả trạng thái</option>
+                    <option th:each="s : ${statuses}" th:value="${s}"
+                            th:selected="${status != null and status == s}"
+                            th:text="${s.name() == 'APPROVED'} ? 'Đã duyệt' : (${s.name() == 'PENDING'} ? 'Chờ duyệt' : 'Từ chối')"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a class="btn btn-light" th:href="@{/admin/comments}">Xóa lọc</a>
+            </form>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Nội dung</th>
+                    <th>Bài viết</th>
+                    <th>Người bình luận</th>
+                    <th style="width:110px">Trạng thái</th>
+                    <th style="width:150px">Ngày tạo</th>
+                    <th style="width:130px">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${page.content}">
+                    <td th:text="${c.content}">Nội dung bình luận</td>
+                    <td th:text="${c.article.title}">Bài viết</td>
+                    <td th:text="${c.user.fullName}">Người dùng</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${c.status.name() == 'APPROVED'} ? 'badge-green' : 'badge-gray'"
+                              th:text="${c.status.name() == 'APPROVED'} ? 'Đã duyệt' : (${c.status.name() == 'PENDING'} ? 'Chờ duyệt' : 'Từ chối')">Chờ duyệt</span>
+                    </td>
+                    <td th:text="${c.createdAt != null} ? ${#temporals.format(c.createdAt, 'dd/MM/yyyy HH:mm')} : ''">-</td>
+                    <td class="actions">
+                        <a class="btn btn-light btn-sm" th:href="@{/admin/comments/edit/{id}(id=${c.id})}">Sửa</a>
+                        <form th:action="@{/admin/comments/delete/{id}(id=${c.id})}" method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn xóa bình luận này?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${page.empty}">
+                    <td colspan="6" class="empty">Chưa có bình luận nào</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination" th:if="${page.totalPages > 1}">
+                <a th:if="${page.hasPrevious()}"
+                   th:href="@{/admin/comments(page=${page.number - 1}, keyword=${keyword}, articleId=${articleId}, status=${status})}">&laquo;</a>
+                <a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                   th:href="@{/admin/comments(page=${i}, keyword=${keyword}, articleId=${articleId}, status=${status})}"
+                   th:text="${i + 1}" th:classappend="${i == page.number} ? 'active'">1</a>
+                <a th:if="${page.hasNext()}"
+                   th:href="@{/admin/comments(page=${page.number + 1}, keyword=${keyword}, articleId=${articleId}, status=${status})}">&raquo;</a>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

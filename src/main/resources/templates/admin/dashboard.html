@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{admin/fragments/layout :: head('Dashboard')}"></head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/layout :: head('Tổng quan')}"></head>
 <body>
 <div class="app">
     <aside th:replace="~{admin/fragments/layout :: sidebar('dashboard')}"></aside>
@@ -8,86 +9,255 @@
     <div class="main">
         <header th:replace="~{admin/fragments/layout :: topbar}"></header>
 
-        <main class="content">
-            <div class="page-head">
-                <div>
-                    <h1>Dashboard</h1>
-                    <p class="page-sub">Tổng quan hoạt động của hệ thống tin tức</p>
+        <main class="content dashboard-content">
+            <section class="welcome-panel">
+                <div class="welcome-copy">
+                    <div class="breadcrumb">
+                        <a th:href="@{/admin/dashboard}">Newsroom</a>
+                        <span>/</span>
+                        <span>Tổng quan</span>
+                    </div>
+                    <p class="welcome-eyebrow">TINTUC24H <span>•</span> NEWSROOM CMS</p>
+                    <h1>Chào mừng trở lại,<br><span th:text="${greetingName}">Admin</span>!</h1>
+                    <p class="welcome-description">Toàn cảnh hoạt động biên tập và xuất bản của tòa soạn.</p>
+                    <div class="welcome-date">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                        <span th:text="${todayLabel}">Thứ Hai, ngày 24 tháng 11, 2026</span>
+                    </div>
                 </div>
-                <a class="btn btn-primary" th:href="@{/admin/articles/create}">
-                    <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Viết bài mới
-                </a>
-            </div>
-
-            <div class="cards">
-                <a class="stat-card" th:href="@{/admin/articles}">
-                    <span class="stat-icon blue">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    </span>
-                    <span>
-                        <span class="card-number" th:text="${articleCount}">0</span>
-                        <span class="card-label">Bài viết</span>
-                    </span>
-                </a>
-                <a class="stat-card" th:href="@{/admin/categories}">
-                    <span class="stat-icon green">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                    </span>
-                    <span>
-                        <span class="card-number" th:text="${categoryCount}">0</span>
-                        <span class="card-label">Chuyên mục</span>
-                    </span>
-                </a>
-                <a class="stat-card" th:href="@{/admin/users}">
-                    <span class="stat-icon purple">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </span>
-                    <span>
-                        <span class="card-number" th:text="${userCount}">0</span>
-                        <span class="card-label">Người dùng</span>
-                    </span>
-                </a>
-                <a class="stat-card" th:href="@{/admin/articles}">
-                    <span class="stat-icon orange">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-                    </span>
-                    <span>
-                        <span class="card-number" th:text="${draftCount}">0</span>
-                        <span class="card-label">Bản nháp</span>
-                    </span>
-                </a>
-            </div>
-
-            <section class="panel">
-                <div class="panel-head">
-                    <h2>Bài viết mới nhất</h2>
-                    <a th:href="@{/admin/articles}" class="link">Xem tất cả &rarr;</a>
+                <div class="welcome-action">
+                    <div class="welcome-mark" aria-hidden="true">
+                        <svg viewBox="0 0 180 180"><circle cx="90" cy="90" r="82"/><path d="M58 44h54l22 22v72H58z"/><path d="M112 44v24h22M74 89h43M74 105h43M74 121h30"/></svg>
+                    </div>
+                    <div class="welcome-buttons">
+                        <a class="btn-welcome-secondary" th:href="@{/admin/articles}">
+                            Xem danh sách bài viết
+                        </a>
+                        <a class="btn btn-compose" th:href="@{/admin/articles/create}">
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                            Viết bài mới
+                        </a>
+                    </div>
                 </div>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Tiêu đề</th>
-                        <th>Chuyên mục</th>
-                        <th style="width:110px">Trạng thái</th>
-                        <th style="width:150px">Ngày tạo</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="a : ${latestArticles}">
-                        <td th:text="${a.title}">Tiêu đề</td>
-                        <td th:text="${a.category.name}">Chuyên mục</td>
-                        <td>
-                            <span class="badge" th:classappend="${a.status.name() == 'PUBLISHED'} ? 'badge-green' : 'badge-gray'"
-                                  th:text="${a.status.name() == 'PUBLISHED'} ? 'Đã đăng' : 'Bản nháp'">Nháp</span>
-                        </td>
-                        <td th:text="${a.createdAt != null} ? ${#temporals.format(a.createdAt, 'dd/MM/yyyy HH:mm')} : ''">-</td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(latestArticles)}">
-                        <td colspan="4" class="empty">Chưa có bài viết nào</td>
-                    </tr>
-                    </tbody>
-                </table>
+            </section>
+
+            <section class="metric-grid" aria-label="Thống kê tổng quan">
+                <a class="metric-card" th:each="stat : ${statCards}"
+                   th:classappend="'tone-' + ${stat.tone}" th:href="${stat.href}">
+                    <div class="metric-heading">
+                        <span class="metric-icon">
+                            <svg th:if="${stat.key == 'articles'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+                            <svg th:if="${stat.key == 'published'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                            <svg th:if="${stat.key == 'drafts'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                            <svg th:if="${stat.key == 'categories'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13V6a2 2 0 0 0-2-2H8L4 8v10a2 2 0 0 0 2 2h8"/><path d="M4 8h4V4M16 16l2 2 4-5"/></svg>
+                            <svg th:if="${stat.key == 'users'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+                            <svg th:if="${stat.key == 'views'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </span>
+                        <span class="metric-link" aria-hidden="true">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg>
+                        </span>
+                    </div>
+                    <span class="metric-label" th:text="${stat.label}">Tổng bài viết</span>
+                    <span class="metric-value" th:text="${stat.value}">0</span>
+                    <div class="metric-foot">
+                        <span class="metric-hint" th:text="${stat.comparison != null ? stat.comparison : stat.hint}">Bài mới trong 6 tháng</span>
+                        <svg class="sparkline" th:if="${stat.sparkline != null and !#strings.isEmpty(stat.sparkline)}"
+                             viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+                            <polyline th:attr="points=${stat.sparkline}"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </section>
+
+            <section class="analytics-grid" id="analytics">
+                <article class="surface chart-panel">
+                    <div class="section-heading chart-heading">
+                        <div>
+                            <p class="section-eyebrow">HIỆU SUẤT XUẤT BẢN</p>
+                            <h2>Bài viết theo thời gian</h2>
+                            <p class="section-subtitle" th:text="${rangeLabel}">6 tháng gần nhất</p>
+                        </div>
+                        <form class="range-form" method="get" th:action="@{/admin/dashboard}">
+                            <label class="sr-only" for="chartRange">Khoảng thời gian biểu đồ</label>
+                            <select id="chartRange" name="range" onchange="this.form.submit()">
+                                <option value="6" th:selected="${selectedRange == '6'}">6 tháng</option>
+                                <option value="12" th:selected="${selectedRange == '12'}">12 tháng</option>
+                                <option value="year" th:selected="${selectedRange == 'year'}">Năm nay</option>
+                            </select>
+                            <noscript><button class="btn btn-light btn-sm" type="submit">Áp dụng</button></noscript>
+                        </form>
+                    </div>
+                    <div class="chart-canvas">
+                        <svg class="monthly-chart" viewBox="0 0 760 278" role="img"
+                             th:attr="aria-label=|Bài viết theo tháng, ${rangeLabel}|">
+                            <defs>
+                                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#4f83ff"/>
+                                    <stop offset="100%" stop-color="#2864eb"/>
+                                </linearGradient>
+                            </defs>
+                            <g th:each="line : ${gridLines}">
+                                <line x1="54" x2="746" th:y1="${line.y}" th:y2="${line.y}" class="chart-grid-line"/>
+                                <text x="43" th:y="${line.y + 4}" text-anchor="end" class="chart-axis-label"
+                                      th:text="${line.value}">0</text>
+                            </g>
+                            <g th:each="point : ${monthPoints}">
+                                <rect th:x="${point.x}" th:y="${point.y}" th:width="${point.width}" th:height="${point.height}"
+                                      rx="7" fill="url(#barGradient)" class="chart-bar">
+                                    <title th:text="|${point.label}: ${point.value} bài viết|">Tháng: 0 bài viết</title>
+                                </rect>
+                                <text th:if="${point.value > 0}" th:x="${point.centerX}" th:y="${point.y - 9}"
+                                      text-anchor="middle" class="chart-value-label" th:text="${point.value}">0</text>
+                                <text th:x="${point.centerX}" y="253" text-anchor="middle" class="chart-month-label"
+                                      th:text="${point.label}">11/2026</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="chart-footnote">
+                        <span class="chart-legend-dot"></span>
+                        <span>Số bài viết được tạo trong từng tháng</span>
+                    </div>
+                </article>
+
+                <article class="surface chart-panel category-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="section-eyebrow">CƠ CẤU NỘI DUNG</p>
+                            <h2>Bài viết theo chuyên mục</h2>
+                            <p class="section-subtitle">Phân bổ trên dữ liệu hiện có</p>
+                        </div>
+                    </div>
+                    <div class="category-chart">
+                        <div class="donut-wrap" th:if="${!#lists.isEmpty(categorySlices)}">
+                            <svg class="donut-chart" viewBox="0 0 220 220" role="img" aria-label="Tỷ lệ bài viết theo chuyên mục">
+                                <circle cx="110" cy="110" r="78" fill="none" stroke="#edf1f7" stroke-width="16"/>
+                                <circle th:each="slice : ${categorySlices}" cx="110" cy="110" r="78" fill="none"
+                                        stroke-width="16" stroke-linecap="butt" transform="rotate(-90 110 110)"
+                                        th:attr="stroke=${slice.color}, stroke-dasharray=${slice.dashArray}, stroke-dashoffset=${slice.dashOffset}">
+                                    <title th:text="|${slice.label}: ${slice.value} bài, ${slice.percent}%|">Chuyên mục</title>
+                                </circle>
+                                <text x="110" y="106" text-anchor="middle" class="donut-total" th:text="${categoryTotal}">0</text>
+                                <text x="110" y="130" text-anchor="middle" class="donut-caption">bài viết</text>
+                            </svg>
+                        </div>
+                        <div class="donut-legend" th:if="${!#lists.isEmpty(categorySlices)}">
+                            <div class="legend-row" th:each="slice : ${categorySlices}">
+                                <span class="legend-color" th:style="'background-color:' + ${slice.color}"></span>
+                                <span class="legend-name" th:text="${slice.label}">Chuyên mục</span>
+                                <strong th:text="${slice.value}">0</strong>
+                                <small th:text="|${slice.percent}%|">0%</small>
+                            </div>
+                        </div>
+                        <div class="empty-chart" th:if="${#lists.isEmpty(categorySlices)}">
+                            <p>Chưa có chuyên mục để thống kê.</p>
+                            <a th:href="@{/admin/categories/create}">Tạo chuyên mục đầu tiên</a>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="content-grid">
+                <article class="surface latest-panel">
+                    <div class="section-heading latest-heading">
+                        <div>
+                            <p class="section-eyebrow">BIÊN TẬP</p>
+                            <h2>Bài viết mới nhất</h2>
+                            <p class="section-subtitle">Nội dung vừa được tạo trong newsroom</p>
+                        </div>
+                        <a class="text-link" th:href="@{/admin/articles}">Tất cả bài viết <span aria-hidden="true">→</span></a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="news-table">
+                            <thead>
+                            <tr>
+                                <th>Bài viết</th>
+                                <th>Chuyên mục</th>
+                                <th>Tác giả</th>
+                                <th>Ngày tạo</th>
+                                <th>Trạng thái</th>
+                                <th>Lượt xem</th>
+                                <th><span class="sr-only">Thao tác</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="a : ${latestArticles}">
+                                <td>
+                                    <div class="news-cell">
+                                        <img class="news-thumbnail" th:if="${a.thumbnail != null}"
+                                             th:src="@{/uploads/{f}(f=${a.thumbnail})}" alt="">
+                                        <img class="news-thumbnail" th:if="${a.thumbnail == null}"
+                                             th:src="@{/images/news-placeholder.svg}" alt="Ảnh minh họa">
+                                        <div class="news-copy">
+                                            <a th:href="@{/admin/articles/edit/{id}(id=${a.id})}" th:text="${a.title}">Tiêu đề bài viết</a>
+                                            <span th:text="${a.summary}">Tóm tắt bài viết</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-chip" th:text="${a.category.name}">Chuyên mục</span></td>
+                                <td>
+                                    <div class="author-cell">
+                                        <span class="author-initial" th:text="${#strings.substring(a.author.fullName, 0, 1)}">A</span>
+                                        <span th:text="${a.author.fullName}">Tác giả</span>
+                                    </div>
+                                </td>
+                                <td class="date-cell" th:text="${a.createdAt != null} ? ${#temporals.format(a.createdAt, 'dd/MM/yyyy')} : ''">-</td>
+                                <td>
+                                    <span class="status-pill" th:classappend="'status-' + ${a.status.name().toLowerCase()}"
+                                          th:text="${a.status.name() == 'PUBLISHED'} ? 'Đã xuất bản' : 'Bản nháp'">Bản nháp</span>
+                                </td>
+                                <td class="views-cell" title="Chưa ghi nhận lượt xem thực tế">—</td>
+                                <td><a class="row-action" th:href="@{/admin/articles/edit/{id}(id=${a.id})}" title="Chỉnh sửa bài viết">
+                                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                                </a></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(latestArticles)}">
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <span class="empty-state-icon">✦</span>
+                                        <strong>Chưa có bài viết nào</strong>
+                                        <span>Bắt đầu xây dựng nội dung cho tòa soạn.</span>
+                                        <a class="btn btn-primary btn-sm" th:href="@{/admin/articles/create}">Viết bài đầu tiên</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <aside class="surface activity-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="section-eyebrow">NHẬT KÝ TÒA SOẠN</p>
+                            <h2>Hoạt động gần đây</h2>
+                            <p class="section-subtitle">Lịch sử thao tác được ghi nhận</p>
+                        </div>
+                    </div>
+                    <div class="activity-timeline" th:if="${!#lists.isEmpty(recentActivities)}">
+                        <article class="activity-item" th:each="activity : ${recentActivities}">
+                            <span class="activity-icon" th:classappend="'activity-' + ${activity.action.tone}">
+                                <svg th:if="${activity.action.icon == 'article'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+                                <svg th:if="${activity.action.icon == 'edit'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                                <svg th:if="${activity.action.icon == 'delete'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></svg>
+                                <svg th:if="${activity.action.icon == 'category'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                <svg th:if="${activity.action.icon == 'user'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+                                <svg th:if="${activity.action.icon == 'comment'}" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 4a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>
+                            </span>
+                            <div class="activity-copy">
+                                <p><strong th:text="${activity.actor}">admin</strong>
+                                    <span th:text="${activity.action.label}">đã thực hiện thao tác</span>
+                                </p>
+                                <span class="activity-subject" th:text="${activity.subject}">Tiêu đề nội dung</span>
+                                <time th:text="${activity.createdAt != null} ? ${#temporals.format(activity.createdAt, 'dd/MM/yyyy HH:mm')} : ''">-</time>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="activity-empty" th:if="${#lists.isEmpty(recentActivities)}">
+                        <span class="activity-empty-mark">⌁</span>
+                        <strong>Chưa có hoạt động</strong>
+                        <p>Lịch sử đăng, sửa hoặc xóa nội dung sẽ xuất hiện tại đây sau khi được ghi nhận.</p>
+                    </div>
+                </aside>
             </section>
         </main>
     </div>

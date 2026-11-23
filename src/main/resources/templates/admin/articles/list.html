@@ -23,6 +23,11 @@
                     <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"
                             th:selected="${categoryId != null and categoryId == c.id}"></option>
                 </select>
+                <select name="status">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="PUBLISHED" th:selected="${status != null and status.name() == 'PUBLISHED'}">Đã đăng</option>
+                    <option value="DRAFT" th:selected="${status != null and status.name() == 'DRAFT'}">Bản nháp</option>
+                </select>
                 <button type="submit" class="btn btn-primary">Lọc</button>
                 <a class="btn btn-light" th:href="@{/admin/articles}">Xóa lọc</a>
             </form>
@@ -74,13 +79,13 @@
 
             <div class="pagination" th:if="${page.totalPages > 1}">
                 <a th:if="${page.hasPrevious()}"
-                   th:href="@{/admin/articles(page=${page.number - 1}, keyword=${keyword}, categoryId=${categoryId})}">&laquo;</a>
+                   th:href="@{/admin/articles(page=${page.number - 1}, keyword=${keyword}, categoryId=${categoryId}, status=${status})}">&laquo;</a>
                 <a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                   th:href="@{/admin/articles(page=${i}, keyword=${keyword}, categoryId=${categoryId})}"
+                   th:href="@{/admin/articles(page=${i}, keyword=${keyword}, categoryId=${categoryId}, status=${status})}"
                    th:text="${i + 1}"
                    th:classappend="${i == page.number} ? 'active'">1</a>
                 <a th:if="${page.hasNext()}"
-                   th:href="@{/admin/articles(page=${page.number + 1}, keyword=${keyword}, categoryId=${categoryId})}">&raquo;</a>
+                   th:href="@{/admin/articles(page=${page.number + 1}, keyword=${keyword}, categoryId=${categoryId}, status=${status})}">&raquo;</a>
             </div>
         </main>
     </div>

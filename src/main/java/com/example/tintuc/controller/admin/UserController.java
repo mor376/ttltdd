@@ -1,10 +1,12 @@
 package com.example.tintuc.controller.admin;
 
 import com.example.tintuc.dto.UserForm;
+import com.example.tintuc.entity.ActivityType;
 import com.example.tintuc.entity.Role;
 import com.example.tintuc.entity.User;
 import com.example.tintuc.repository.ArticleRepository;
 import com.example.tintuc.repository.UserRepository;
+import com.example.tintuc.service.ActivityLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,6 +33,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ActivityLogService activityLogService;
 
     // ===== Danh sách + tìm kiếm + phân trang =====
     @GetMapping
@@ -57,9 +61,11 @@ public class UserController {
         return "admin/users/form";
     }
 
+    @Transactional
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("userForm") UserForm form,
                          BindingResult result,
+                         Principal principal,
                          Model model,
                          RedirectAttributes ra) {
         form.setId(null);
@@ -86,6 +92,7 @@ public class UserController {
         user.setRole(form.getRole());
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         userRepository.save(user);
+        activityLogService.record(principal.getName(), ActivityType.USER_CREATED, user.getUsername());
 
         ra.addFlashAttribute("success", "Đã thêm người dùng \"" + username + "\"");
         return "redirect:/admin/users";
@@ -110,6 +117,7 @@ public class UserController {
         return "admin/users/form";
     }
 
+    @Transactional
     @PostMapping("/edit/{id}")
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("userForm") UserForm form,
@@ -152,12 +160,16 @@ public class UserController {
             existing.setPassword(passwordEncoder.encode(form.getPassword()));
         }
         userRepository.save(existing);
+        ActivityType action = existing.getUsername().equals(principal.getName())
+                ? ActivityType.ADMIN_PROFILE_UPDATED : ActivityType.USER_UPDATED;
+        activityLogService.record(principal.getName(), action, existing.getFullName());
 
         ra.addFlashAttribute("success", "Đã cập nhật người dùng \"" + existing.getUsername() + "\"");
         return "redirect:/admin/users";
     }
 
     // ===== Xóa =====
+    @Transactional
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id, Principal principal, RedirectAttributes ra) {
         User user = userRepository.findById(id).orElse(null);
@@ -170,6 +182,7 @@ public class UserController {
                     "Không thể xóa \"" + user.getUsername() + "\" vì người này còn bài viết");
         } else {
             userRepository.delete(user);
+            activityLogService.record(principal.getName(), ActivityType.USER_DELETED, user.getUsername());
             ra.addFlashAttribute("success", "Đã xóa người dùng \"" + user.getUsername() + "\"");
         }
         return "redirect:/admin/users";
@@ -182,10 +195,11 @@ public class UserController {
     }
 
     private void checkPassword(String password, boolean required, BindingResult result) {
-        boolean blank = password == null || password.isBlank();
-        if (blank && required) {
-            result.rejectValue("password", "required", "Mật khẩu không được để trống");
-        } else if (!blank && password.length() < 6) {
+        if (password == null || password.isBlank()) {
+            if (required) {
+                result.rejectValue("password", "required", "Mật khẩu không được để trống");
+            }
+        } else if (password.length() < 6) {
             result.rejectValue("password", "short", "Mật khẩu tối thiểu 6 ký tự");
         }
     }

@@ -38,7 +38,7 @@ Phiên bản này hoàn thành phần **trang quản trị** (Buổi 1–3).
 
 4. Mở trình duyệt: <http://localhost:8080/admin/login>
 
-Lần chạy đầu tiên, ứng dụng tự tạo bảng và dữ liệu mẫu (tài khoản, 6 chuyên mục, 12 bài viết).
+Lần chạy đầu tiên, ứng dụng tự tạo bảng và dữ liệu mẫu (tài khoản, 6 chuyên mục, 20 bài viết). Nếu đã có dữ liệu, ứng dụng chỉ bổ sung bài mẫu còn thiếu và không xóa bài viết hiện có.
 
 ## Tài khoản mặc định
 
@@ -58,6 +58,7 @@ Chỉ tài khoản ADMIN đăng nhập được vào trang quản trị.
 | Chuyên mục | `/admin/categories` (thêm: `/create`, sửa: `/edit/{id}`) |
 | Người dùng | `/admin/users` (thêm: `/create`, sửa: `/edit/{id}`) |
 | Bài viết | `/admin/articles` (thêm: `/create`, sửa: `/edit/{id}`) |
+| Bình luận | `/admin/comments` (thêm: `/create`, sửa: `/edit/{id}`) |
 
 Xóa được thực hiện bằng phương thức POST tại `/delete/{id}` của từng mục.
 

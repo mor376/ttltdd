@@ -1,8 +1,10 @@
 package com.example.tintuc.controller.admin;
 
+import com.example.tintuc.entity.ActivityType;
 import com.example.tintuc.entity.Category;
 import com.example.tintuc.repository.ArticleRepository;
 import com.example.tintuc.repository.CategoryRepository;
+import com.example.tintuc.service.ActivityLogService;
 import com.example.tintuc.util.SlugUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +14,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +32,7 @@ public class CategoryController {
 
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
+    private final ActivityLogService activityLogService;
 
     // ===== Danh sách + tìm kiếm + phân trang =====
     @GetMapping
@@ -57,9 +62,11 @@ public class CategoryController {
         return "admin/categories/form";
     }
 
+    @Transactional
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("category") Category category,
                          BindingResult result,
+                         Principal principal,
                          Model model,
                          RedirectAttributes ra) {
         category.setId(null);
@@ -76,6 +83,7 @@ public class CategoryController {
         category.setName(name);
         category.setSlug(uniqueSlug(name, null));
         categoryRepository.save(category);
+        activityLogService.record(principal.getName(), ActivityType.CATEGORY_CREATED, name);
 
         ra.addFlashAttribute("success", "Đã thêm chuyên mục \"" + name + "\"");
         return "redirect:/admin/categories";
@@ -94,10 +102,12 @@ public class CategoryController {
         });
     }
 
+    @Transactional
     @PostMapping("/edit/{id}")
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("category") Category category,
                          BindingResult result,
+                         Principal principal,
                          Model model,
                          RedirectAttributes ra) {
         Category existing = categoryRepository.findById(id).orElse(null);
@@ -122,14 +132,16 @@ public class CategoryController {
         existing.setName(name);
         existing.setDescription(category.getDescription());
         categoryRepository.save(existing);
+        activityLogService.record(principal.getName(), ActivityType.CATEGORY_UPDATED, name);
 
         ra.addFlashAttribute("success", "Đã cập nhật chuyên mục \"" + name + "\"");
         return "redirect:/admin/categories";
     }
 
     // ===== Xóa =====
+    @Transactional
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+    public String delete(@PathVariable Long id, Principal principal, RedirectAttributes ra) {
         Category category = categoryRepository.findById(id).orElse(null);
         if (category == null) {
             ra.addFlashAttribute("error", "Không tìm thấy chuyên mục");
@@ -138,6 +150,7 @@ public class CategoryController {
                     "Không thể xóa \"" + category.getName() + "\" vì còn bài viết thuộc chuyên mục này");
         } else {
             categoryRepository.delete(category);
+            activityLogService.record(principal.getName(), ActivityType.CATEGORY_DELETED, category.getName());
             ra.addFlashAttribute("success", "Đã xóa chuyên mục \"" + category.getName() + "\"");
         }
         return "redirect:/admin/categories";
